@@ -8,6 +8,7 @@ data Shape = NoTriangle | Equilateral | Isosceles | Rectangular | Other deriving
 
 -- The program is tested by using quickCheck. Each different possible shape has its own test.
 -- See comments below for the specific implementation.
+-- Time spent: 1.5 hours. Most time was spent on quickcheck. The function itself took a lot less time.
 
 main :: IO ()
 main = do
