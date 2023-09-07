@@ -5,6 +5,10 @@ import Test.QuickCheck
 
 data Shape = NoTriangle | Equilateral | Isosceles | Rectangular | Other deriving (Eq,Show)
 
+
+-- The program is tested by using quickCheck. Each different possible shape has its own test.
+-- See comments below for the specific implementation.
+
 main :: IO ()
 main = do
     -- quickCheck (forAll positiveTriplets prop_Triangle)
