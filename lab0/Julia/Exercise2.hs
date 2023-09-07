@@ -35,3 +35,4 @@ tupleToList (a, b, c, d) = [a, b, c, d]
 checkBounds :: Int -> [Float] -> Bool
 checkBounds n result = any (\x -> x > round ((fromIntegral n) * 0.25 * 0.95) || x < round ((fromIntegral n) * 0.25 * 1.05)) (tupleToList (countItems result (0,0,0,0)))
 
+-- time spent: 2 hrs
