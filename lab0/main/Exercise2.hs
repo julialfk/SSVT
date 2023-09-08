@@ -12,7 +12,7 @@ probs n = do
 
 -- Usage: 'check 100' to check 100 different cases of lists with 10000 items.
 -- Uses recursion to repeat the process and check if all lists are within allowed deviation.
--- 10000 items and 100 repetitions were chosen as they seemed as sufficiently reliable numbers.
+-- 10000 items was chosen as it seemed as a sufficient list size.
 check :: Int -> IO()
 check 0 = print True
 check x = do
@@ -31,8 +31,9 @@ countItems (x:xs) (a, b, c, d) | x <= 0.25 = countItems xs (a + 1, b, c, d)
 tupleToList :: (Int, Int, Int, Int) -> [Int]
 tupleToList (a, b, c, d) = [a, b, c, d]
 
--- Checks each bucket length whether they are still within the deviation of 5% of the average bucket size.
+-- Checks each bucket length whether they are still within the deviation of 10% of the average bucket size.
+-- 10% was chosen as an acceptable deviation.
 checkBounds :: Int -> [Float] -> Bool
-checkBounds n result = any (\x -> x > round ((fromIntegral n) * 0.25 * 0.95) || x < round ((fromIntegral n) * 0.25 * 1.05)) (tupleToList (countItems result (0,0,0,0)))
+checkBounds n result = all (\x -> x > round ((fromIntegral n) * 0.25 * 0.90) && x < round ((fromIntegral n) * 0.25 * 1.10)) (tupleToList (countItems result (0,0,0,0)))
 
 -- time spent: 2 hrs
