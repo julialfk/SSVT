@@ -1,4 +1,5 @@
 module Exercise7 where
+
 import SetOrd
 import Test.QuickCheck
 import Lecture3
@@ -7,13 +8,18 @@ import Lecture3
 
 main :: IO ()
 main = do
-    -- Tests whether the length of the sub of a random Prop x is equal to 1
-    quickCheck (forAll genProp prop_BaseCaseLength)
-    -- Tests whether the first element of the sub of a random Prop x is equal to x
-    quickCheck (forAll genProp prop_BaseCaseElement)
-    -- Tests whether the number of elements in sub x (where x is a randomly generated Form)
-    -- is smaller or equal to the maximum bound of that Form.
-    quickCheck (forAll genForm prop_LengthUpperBound)
+      -- Tests whether the length of the sub of a random Prop x is equal to 1.
+      -- All tests pass
+      quickCheck (forAll genProp prop_BaseCaseLength)
+
+      -- Tests whether the first element of the sub of a random Prop x is equal to x.
+      -- All tests pass.
+      quickCheck (forAll genProp prop_BaseCaseElement)
+
+      -- Tests whether the number of elements in sub x (where x is a randomly generated Form)
+      -- is smaller or equal to the maximum bound of that Form.
+      -- All tests pass (computation however isn't instant because of the generator and recursive nature of sub).
+      quickCheck (forAll genForm prop_LengthUpperBound)
 
 sub :: Form -> Set Form
 sub (Prop x) = Set [Prop x]
