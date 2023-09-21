@@ -21,25 +21,23 @@ main = do
     putStrLn $ "honest: " ++ show honest
 
 -- boy1 accuses boy2 of having done it
--- Using pattern matching and guards, we can write down the statements of the boys
--- in logical formulas.
 accuses :: Boy -> Boy -> Bool
 
--- "It was Matthew or it was Jack." -> It is true with Matthew and Jack, otherwise false.
+-- "It was Matthew or it was Jack."
 accuses Peter boy2      | boy2 == Matthew || boy2 == Jack = True
                         | otherwise = False
 
--- "Carl didn't do it, and neither did I" -> so it is false with their names, and otherwise true.
+-- "Carl didn't do it, and neither did I" -> so the others did do it
 accuses Matthew boy2    | boy2 == Carl || boy2 == Matthew = False
                         | otherwise = True
 
--- "Matthew and Peter are both lying" -> negate the statements of both Matthew and Peter (negate = not)
+-- "Matthew and Peter are both lying" -> negate their statements
 accuses Jack boy2       = not (accuses Matthew boy2) && not (accuses Peter boy2)
 
--- "Matthew or Peter is speaking the truth, but not both" -> literally translate this to logic using && and ||
+-- "Matthew or Peter is speaking the truth, but not both"
 accuses Arnold boy2     = (accuses Peter boy2 || accuses Matthew boy2) && not (accuses Peter boy2 && accuses Matthew boy2)
 
--- "What Arnold says is not true." -> negate his statement (by using not)
+-- "What Arnold says is not true." -> negate his statement
 accuses Carl boy2       = not (accuses Arnold boy2)
 
 -- generates a list of all the boys that accuse this boy
