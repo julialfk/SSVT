@@ -2,6 +2,8 @@ import SetOrd
 import Test.QuickCheck
 import Lecture3
 
+-- Indication of time spent: 4 hours.
+
 main :: IO ()
 main = do
     -- Tests whether the length of the sub of a random Prop x is equal to 1
@@ -35,18 +37,18 @@ sub f@(Equiv f1 f2) = unionSet ( unionSet (Set [f]) (sub f1)) (sub f2)
 -- We could test the base case, like discussed in the quesiton above. We can see if Prop x
 -- indeed returns a set containing only Prop x: so the length of the set has to be 1 and the one element in it has to be x
 -- Note: this prop_BaseCaseLength does assume that the implementation of nsub is correct
-prop_BaseCaseLength :: Form -> Bool
-prop_BaseCaseLength x = nsub x == 1
+prop_BaseCaseLength :: Form -> Property
+prop_BaseCaseLength x = property (nsub x == 1)
 
-prop_BaseCaseElement :: Form -> Bool
-prop_BaseCaseElement x = firstSetElement (sub x) == x
+prop_BaseCaseElement :: Form -> Property
+prop_BaseCaseElement x = property (firstSetElement (sub x) == x)
 
 -- Another property would be that the number of subformulae is at max a maximum bound, definied by
 -- each element of the formula being worth one subformula in itself, combined with the components that it is made
 -- up from. See the implementation of upperBound for more details. Again, this property assumes that the implementation
 -- of nsub is correct.
-prop_LengthUpperBound :: Form -> Bool
-prop_LengthUpperBound x = nsub x <= upperBound x
+prop_LengthUpperBound :: Form -> Property
+prop_LengthUpperBound x = property (nsub x <= upperBound x)
 
 -- We also thought about testing whether all the Prop x in the input, are also present in the output (and vice versa).
 -- However, we couldn't figure out a way to implement this in Haskell, without using the sub function itself (and this
