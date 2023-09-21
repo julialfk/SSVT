@@ -1,18 +1,25 @@
+module Exercise1 where
+
 import Data.List
 import System.Random
 import Test.QuickCheck
 import Control.Exception
 
--- 5 hours spent
+
+-- Indication of time spent: 5 hours.
 
 main :: IO ()
 main = do
-    -- Check whether the factorial of n is larger or equal to n.
-    quickCheck (forAll genPosNum prop_1) 
+    -- Test whether the factorial of n is larger or equal to n. All tests pass.
+    quickCheck (forAll genPosNum prop_size) 
     
-    -- Check whether the factorial of n is even (when n >= 2), or 1 (when n = 0 
-    -- r 1), or an error (when n < 0).
+    -- Test whether the factorial of n is even (when n >= 2), or 1 (when n = 0 
+    -- r 1), or an error (when n < 0). All tests pass.
     quickCheck prop_Even
+
+    -- Test whether the factorial of n + 1 is equal to the factorial of n multiplied by (n + 1).
+    -- All tests pass.
+    quickCheck (forAll genPosNum prop_Next)
 
 -- This function accepts all integers, but will throw an error when n < 0,
 -- because the factorial of a negative number does not exist.
@@ -22,8 +29,8 @@ factorial n | n < 0 = error "n cannot be negative"
             | otherwise = n * factorial (n - 1)
 
 -- The factorial of a number should be equal to or greater than that number.
-prop_1 :: Integer -> Property
-prop_1 n = property (factorial n >= n)
+prop_size :: Integer -> Property
+prop_size n = property (factorial n >= n)
 
 -- If n >= 2: factorial n should be an even number
 -- If n < 0: an error should be thrown (but the program does not terminate; the test keeps on running)
@@ -44,6 +51,10 @@ prop_Even n = ioProperty $ do
         case result of
             Left (ErrorCall msg) -> n < 0 && msg == "n cannot be negative"
             Right x -> checkFactorial n x
+
+-- The factorial of the next integer (n + 1) should be equal to the factorial of n, multiplied by (n + 1)
+prop_Next :: Integer -> Property
+prop_Next n = property (factorial (n + 1) == (n + 1) * factorial n)
 
 --  Helper function for prop_Even
 checkFactorial :: Integer -> Integer -> Bool

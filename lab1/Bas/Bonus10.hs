@@ -12,6 +12,7 @@ getMultiples = sum [x | x <- [1..1000], (x `mod` 5 == 0) || (x `mod` 3 == 0)]
 ---- Problem 2: Even Fibonacci Numbers ----
 
 getFib :: Int -> Int -> [Int]
+getFib _ 100 = []
 getFib x y = do 
     if x < 4000000 then [x] ++ getFib y z else []
     where 
