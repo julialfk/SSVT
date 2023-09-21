@@ -1,7 +1,10 @@
+module Exercise1 where
+
 import Data.List
 import System.Random
 import Test.QuickCheck
 import Control.Exception
+
 
 -- 5 hours spent
 
