@@ -23,10 +23,10 @@ prop_Reverse xs = property (isDerangement xs (reverse xs))
 prop_OneElement :: [a] -> Property
 prop_OneElement xs = property (isDerangement xs == False)
 
-genSingletonList :: Gen [Int]
-genSingletonList = do
-  x <- arbitraty
-  return [x]
+-- genSingletonList :: Gen [Int]
+-- genSingletonList = do
+--   x <- arbitraty
+--   return [x]
 
 genDerangements :: Gen [Int]
 genDerangements = do
