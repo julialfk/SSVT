@@ -1,19 +1,30 @@
+module Exercise2 where
 import Data.List
 import System.Random
 import Test.QuickCheck
--- import Lecture1
 
+-- Creates subsequences of a list
 subsequences :: [a] -> [[a]]
-
 subsequences [] = [[]]
-subsequences (x:xs) = subsequences xs ++ map (x:) (subsequences xs)
+subsequences (x:xs) = subseq xs ++ map (x:) (subseq xs)
 
-prop_length :: [a] -> Property
-prop_length l = length (subsequences l) == ( 2^ length(l))
+-- Generate lists with limited range, because list growth is O(2^n)
+genList :: Gen [Int]
+genList = do
+  n <- choose (0, 25)
+  vectorOf n arbitrary
 
-alphaChar :: Gen Char
-alphaChar = elements ([0..9])
+-- Compare length of subsequences to formula
+prop_length :: [Int] -> Property
+prop_length l = length (subsequences l) === ( 2^ length(l))
 
--- Generates a list of lower and upper case characters
-alphaString :: Gen String
-alphaString = listOf alphaChar
+
+-- Do quickCheck on the formula to check if it's true
+main :: IO ()
+main = do
+  quickCheck $ forAll genList prop_length
+
+-- In this test we limited the range of n to 25, 100 seems to be too slow, 50 also.
+-- This is because the subsequences grow exponentially, so the time to calculate too.
+
+-- This exercise took us 3 hours
