@@ -4,7 +4,7 @@ import Data.List
 import System.Random
 import Test.QuickCheck
 
--- Time spent: 4 hours.
+-- Indication of time spent: 4 hours.
 
 data Boy =  Matthew | Peter | Jack | Arnold | Carl
             deriving (Eq,Show)
