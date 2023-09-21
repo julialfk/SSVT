@@ -1,3 +1,4 @@
+module Exercise7 where
 import SetOrd
 import Test.QuickCheck
 import Lecture3
