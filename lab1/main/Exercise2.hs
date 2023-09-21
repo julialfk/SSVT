@@ -1,12 +1,11 @@
 module Exercise2 where
-import Data.List
 import System.Random
 import Test.QuickCheck
 
 -- Creates subsequences of a list
 subsequences :: [a] -> [[a]]
 subsequences [] = [[]]
-subsequences (x:xs) = subseq xs ++ map (x:) (subseq xs)
+subsequences (x:xs) = subsequences xs ++ map (x:) (subsequences xs)
 
 -- Generator: Generate lists with limited range, because list growth is O(2^n)
 genList :: Gen [Int]
