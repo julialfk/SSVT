@@ -20,6 +20,14 @@ deran n =  [permutation | permutation <- permutations [0..n-1], isDerangement pe
 prop_Reverse :: [a] -> Property
 prop_Reverse xs = property (isDerangement xs (reverse xs))
 
+prop_OneElement :: [a] -> Property
+prop_OneElement xs = property (isDerangement xs == False)
+
+genSingletonList :: Gen [Int]
+genSingletonList = do
+  x <- arbitraty
+  return [x]
+
 genDerangements :: Gen [Int]
 genDerangements = do
   n <- arbitrary `suchThat` (\n -> n `mod` 2 == 0 && n <= 100) --choose (2, 25)
