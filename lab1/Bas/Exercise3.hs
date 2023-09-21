@@ -14,15 +14,15 @@ positiveIntListGenerator = vectorOf 100 (arbitrary `suchThat` (\x -> x > -10 && 
 randomList :: IO [Int]
 randomList = generate positiveIntListGenerator
 
--- Check if an int is even and bigger than three. (Prop 1)
+-- Check if an int is even and bigger than three. (Implementation of property 1)
 biggerThanAndEven :: Int -> Bool
 biggerThanAndEven x = ((even x) && (x>3))
 
--- Check if an int is even or bigger than three. (Prop 2)
+-- Check if an int is even or bigger than three. (Implementation of property 2)
 biggerThanOrEven :: Int -> Bool
 biggerThanOrEven x = ((even x) || (x>3))
 
--- Check if an int is even and bigger than three.. or even. (Prop 3)
+-- Check if an int is even and bigger than three.. or even. (Implementation of property 3)
 biggerThanAndEvenOrEven :: Int -> Bool
 biggerThanAndEvenOrEven x = (((even x) && (x > 3)) || even x)
 
@@ -38,8 +38,10 @@ getPos xs p (q:qs) =
         True -> 1 + getPos xs p qs
         False -> 0 + getPos xs p qs
 
--- The order of the amount of wins for each property is the same as the order of the properties
--- in the list. These two need to be linked to print them in the correct order.
+-- The function associated with the highest score from the previous function should be printed 
+-- first. To do this, both list get saved and unchanged, we loop throught both list at the same
+-- time until the best score is found. The best score is the length of the list, as this
+-- means the property won all comparisons.
 printOrder :: [String] -> [String] -> [Int] -> [Int] -> Int -> IO ()
 printOrder xs oxs [] os pos = printOrder oxs oxs os os pos
 printOrder xs oxs ls os (-1) = return ()
