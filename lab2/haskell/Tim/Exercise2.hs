@@ -1,6 +1,7 @@
 import Data.List
 import LTS
 import Test.QuickCheck
+import Exercise1
 
 genLabel :: Gen Label
 genLabel = do
@@ -13,9 +14,25 @@ genLabels = do
     li <- vectorOf n genLabel
     m <- choose (1, 5)
     lu <- vectorOf m genLabel
-    if not (null (lu \\ li))
-        then return (li, lu)
-        else genLabels
+
+    let li' = nub li
+        lu' = nub lu
+        commonElements = li' `intersect` lu'
+
+    if not (null commonElements)
+        then genLabels
+        else return (li', lu')
+
+-- fillStatesOut :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
+-- getAllStatesOutTransition (state:xs) li lu s n = 
+
+-- getAllStatesOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
+-- getAllStatesOutTransition _ _ _ _ 0 = return []
+-- getAllStatesOutTransition q li lu s n = do
+--     q1 <- elements q
+--     reaction <- li
+--     rest <- genLinearInOutTransition q li lu q1 (n - 1)
+--     return ((s, reaction, q1) : rest)
 
 genLinearInOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
 genLinearInOutTransition _ _ _ _ 0 = return []
@@ -93,6 +110,56 @@ genIOLTSInvalid = do
 
 main :: IO ()
 main = do
-    putStrLn "Sample IOLTS:"
-    samples <- generate (vectorOf 5 genIOLTSRandom)
-    mapM_ print samples
+    print ("prop_startStateValid")
+    quickCheck (forAll genIOLTSRandom prop_startStateValid)
+    quickCheck (forAll genIOLTSLinearIO prop_startStateValid)
+    quickCheck (forAll genIOLTSLinear prop_startStateValid)
+    quickCheck (forAll genIOLTSInvalid prop_startStateValid)
+
+    print ("prop_inputListEmpty")
+    quickCheck (forAll genIOLTSRandom prop_inputListEmpty)
+    quickCheck (forAll genIOLTSLinearIO prop_inputListEmpty)
+    quickCheck (forAll genIOLTSLinear prop_inputListEmpty)
+    quickCheck (forAll genIOLTSInvalid prop_inputListEmpty)
+
+    print ("prop_outputListEmpty")
+    quickCheck (forAll genIOLTSRandom prop_outputListEmpty)
+    quickCheck (forAll genIOLTSLinearIO prop_outputListEmpty)
+    quickCheck (forAll genIOLTSLinear prop_outputListEmpty)
+    quickCheck (forAll genIOLTSInvalid prop_outputListEmpty)
+
+    print ("prop_uniqueStates")
+    quickCheck (forAll genIOLTSRandom prop_uniqueStates)
+    quickCheck (forAll genIOLTSLinearIO prop_uniqueStates)
+    quickCheck (forAll genIOLTSLinear prop_uniqueStates)
+    quickCheck (forAll genIOLTSInvalid prop_uniqueStates)
+
+    print ("prop_uniqueInputs")
+    quickCheck (forAll genIOLTSRandom prop_uniqueInputs)
+    quickCheck (forAll genIOLTSLinearIO prop_uniqueInputs)
+    quickCheck (forAll genIOLTSLinear prop_uniqueInputs)
+    quickCheck (forAll genIOLTSInvalid prop_uniqueInputs)
+
+    print ("prop_uniqueOutputs")
+    quickCheck (forAll genIOLTSRandom prop_uniqueOutputs)
+    quickCheck (forAll genIOLTSLinearIO prop_uniqueOutputs)
+    quickCheck (forAll genIOLTSLinear prop_uniqueOutputs)
+    quickCheck (forAll genIOLTSInvalid prop_uniqueOutputs)
+
+    print ("prop_inputOutputUnique")
+    quickCheck (forAll genIOLTSRandom prop_inputOutputUnique)
+    quickCheck (forAll genIOLTSLinearIO prop_inputOutputUnique)
+    quickCheck (forAll genIOLTSLinear prop_inputOutputUnique)
+    quickCheck (forAll genIOLTSInvalid prop_inputOutputUnique)
+
+    print ("prop_transitionsValid")
+    quickCheck (forAll genIOLTSRandom prop_transitionsValid)
+    quickCheck (forAll genIOLTSLinearIO prop_transitionsValid)
+    quickCheck (forAll genIOLTSLinear prop_transitionsValid)
+    quickCheck (forAll genIOLTSInvalid prop_transitionsValid)
+
+    print ("prop_startInStates")
+    quickCheck (forAll genIOLTSRandom prop_startInStates)
+    quickCheck (forAll genIOLTSLinearIO prop_startInStates)
+    quickCheck (forAll genIOLTSLinear prop_startInStates)
+    quickCheck (forAll genIOLTSInvalid prop_startInStates)
