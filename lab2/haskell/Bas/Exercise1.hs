@@ -18,17 +18,44 @@ validateLTS (q, li, lu, t, q0)
     | otherwise = True
 
 invalidTransitions :: IOLTS -> Bool
+invalidTransitions (q, li, lu, [], q0) = False
 invalidTransitions (q, li, lu, ((stateOne, label, stateTwo):xs), q0)
-    | not (elem stateOne q) = False
-    | not ((elem label li) || (elem label lu)) = False
-    | not (elem stateTwo q) = False
+    | not (elem stateOne q) = True
+    | not ((elem label li) || (elem label lu)) = True
+    | not (elem stateTwo q) = True
     | otherwise = invalidTransitions (q, li, lu, xs, q0)
 
+prop_startStateValid :: IOLTS -> Property
+prop_startStateValid (q, li, lu, t, q0) = property (not (null q))
+
+prop_inputListEmpty :: IOLTS -> Property
+prop_inputListEmpty (q, li, lu, t, q0) = property (not (null li))
+
+prop_outputListEmpty :: IOLTS -> Property
+prop_outputListEmpty (q, li, lu, t, q0) = property (not (null lu))
+
+prop_uniqueStates :: IOLTS -> Property
+prop_uniqueStates (q, li, lu, t, q0) = property (not (length q /= length (nub q)))
+
+prop_uniqueInputs :: IOLTS -> Property
+prop_uniqueInputs (q, li, lu, t, q0) = property (not (length li /= length (nub li)))
+
+prop_uniqueOutputs :: IOLTS -> Property
+prop_uniqueOutputs (q, li, lu, t, q0) = property (not (length lu /= length (nub lu)))
+
+prop_inputOutputUnique :: IOLTS -> Property
+prop_inputOutputUnique (q, li, lu, t, q0) = property (length (intersect li lu) == 0)
+
+prop_transitionsValid :: IOLTS -> Property
+prop_transitionsValid (q, li, lu, t, q0) = property (not(invalidTransitions (q, li, lu, t, q0)))
+
+prop_startInStates :: IOLTS -> Property
+prop_startInStates (q, li, lu, t, q0) = property (q0 `elem` q)
 
 main :: IO ()
 main = do
-    print tretmanS4
-    print (validateLTS tretmanK3)
+    print tretmanR2
+    print (validateLTS tretmanR1)
 
     -- List of factors that invalidate an IOLTS
     -- 1. Start state not in list of states
