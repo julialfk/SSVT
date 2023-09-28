@@ -3,11 +3,13 @@ import LTS
 import Test.QuickCheck
 import Exercise1
 
+-- Generator: Generates label for the LTS
 genLabel :: Gen Label
 genLabel = do
     char <- elements ['a'..'z']
     return [char]
 
+-- Generator: Generates input and output labels for the LTS
 genLabels :: Gen ([Label], [Label])
 genLabels = do
     n <- choose (1, 5)
@@ -23,17 +25,7 @@ genLabels = do
         then genLabels
         else return (li', lu')
 
--- fillStatesOut :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
--- getAllStatesOutTransition (state:xs) li lu s n = 
-
--- getAllStatesOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
--- getAllStatesOutTransition _ _ _ _ 0 = return []
--- getAllStatesOutTransition q li lu s n = do
---     q1 <- elements q
---     reaction <- li
---     rest <- genLinearInOutTransition q li lu q1 (n - 1)
---     return ((s, reaction, q1) : rest)
-
+-- Generator: Generates linear (not a tree, but linked-list like) transitions for LTS that rotates the input and output
 genLinearInOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
 genLinearInOutTransition _ _ _ _ 0 = return []
 genLinearInOutTransition q li lu s n = do
@@ -42,6 +34,7 @@ genLinearInOutTransition q li lu s n = do
     rest <- genLinearInOutTransition q li lu q1 (n - 1)
     return ((s, reaction, q1) : rest)
 
+-- Generator: Generates linear (not a tree, but linked-list like) transitions for LTS
 genLinearTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
 genLinearTransition _ _ _ _ 0 = return []
 genLinearTransition q li lu s n = do
@@ -50,6 +43,7 @@ genLinearTransition q li lu s n = do
     rest <- genLinearTransition q li lu q1 (n - 1)
     return ((s, reaction, q1) : rest)
 
+-- Generator: Generates random transitions for LTS
 genRandomTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
 genRandomTransition _ _ _ _ 0 = return []
 genRandomTransition q li lu s n = do
@@ -59,15 +53,17 @@ genRandomTransition q li lu s n = do
     rest <- genRandomTransition q li lu q1 (n - 1)
     return ((q1, reaction, q2) : rest)
 
-getInvalidTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
-getInvalidTransition _ _ _ _ 0 = return []
-getInvalidTransition q li lu s n = do
+-- Generator: Generates invalid transitions, that are not possible
+genInvalidTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
+genInvalidTransition _ _ _ _ 0 = return []
+genInvalidTransition q li lu s n = do
     q1 <- choose (100,200)
     q2 <- choose (100,200)
     reaction <- elements (li ++ lu)
     rest <- getInvalidTransition q li lu q1 (n - 1)
     return ((q1, reaction, q2) : rest)
 
+-- Generator: Generates random IOLTS
 genIOLTSRandom :: Gen IOLTS
 genIOLTSRandom = do
     n <- choose (0, 10)
@@ -78,6 +74,7 @@ genIOLTSRandom = do
     t <- genRandomTransition q li lu q0 m
     return (q, li, lu, t, q0)
 
+-- Generator: Generates linear IOLTS with rotating input and output
 genIOLTSLinearIO :: Gen IOLTS
 genIOLTSLinearIO = do
     n <- choose (0, 10)
@@ -88,6 +85,7 @@ genIOLTSLinearIO = do
     t <- genLinearInOutTransition q li lu q0 m
     return (q, li, lu, t, q0)
 
+-- Generator: Generates linear IOLTS
 genIOLTSLinear :: Gen IOLTS
 genIOLTSLinear = do
     n <- choose (0, 10)
@@ -98,6 +96,7 @@ genIOLTSLinear = do
     t <- genLinearTransition q li lu q0 m
     return (q, li, lu, t, q0)
 
+-- Generator: Generates IOLTS that are not valid
 genIOLTSInvalid :: Gen IOLTS
 genIOLTSInvalid = do
     n <- choose (0, 10)
@@ -105,9 +104,10 @@ genIOLTSInvalid = do
     (li, lu) <- genLabels
     m <- choose (1, 20)
     q0 <- choose (11, 20)
-    t <- getInvalidTransition q li lu q0 m
+    t <- genInvalidTransition q li lu q0 m
     return (q, li, li, t, q0)
 
+-- Run all tests
 main :: IO ()
 main = do
     print ("prop_startStateValid")
@@ -116,17 +116,17 @@ main = do
     quickCheck (forAll genIOLTSLinear prop_startStateValid)
     quickCheck (forAll genIOLTSInvalid prop_startStateValid)
 
-    print ("prop_inputListEmpty")
-    quickCheck (forAll genIOLTSRandom prop_inputListEmpty)
-    quickCheck (forAll genIOLTSLinearIO prop_inputListEmpty)
-    quickCheck (forAll genIOLTSLinear prop_inputListEmpty)
-    quickCheck (forAll genIOLTSInvalid prop_inputListEmpty)
+    print ("prop_inputLabelsEmpty")
+    quickCheck (forAll genIOLTSRandom prop_inputLabelsEmpty)
+    quickCheck (forAll genIOLTSLinearIO prop_inputLabelsEmpty)
+    quickCheck (forAll genIOLTSLinear prop_inputLabelsEmpty)
+    quickCheck (forAll genIOLTSInvalid prop_inputLabelsEmpty)
 
-    print ("prop_outputListEmpty")
-    quickCheck (forAll genIOLTSRandom prop_outputListEmpty)
-    quickCheck (forAll genIOLTSLinearIO prop_outputListEmpty)
-    quickCheck (forAll genIOLTSLinear prop_outputListEmpty)
-    quickCheck (forAll genIOLTSInvalid prop_outputListEmpty)
+    print ("prop_outputLabelsEmpty")
+    quickCheck (forAll genIOLTSRandom prop_outputLabelsEmpty)
+    quickCheck (forAll genIOLTSLinearIO prop_outputLabelsEmpty)
+    quickCheck (forAll genIOLTSLinear prop_outputLabelsEmpty)
+    quickCheck (forAll genIOLTSInvalid prop_outputLabelsEmpty)
 
     print ("prop_uniqueStates")
     quickCheck (forAll genIOLTSRandom prop_uniqueStates)
@@ -163,3 +163,5 @@ main = do
     quickCheck (forAll genIOLTSLinearIO prop_startInStates)
     quickCheck (forAll genIOLTSLinear prop_startInStates)
     quickCheck (forAll genIOLTSInvalid prop_startInStates)
+
+    -- Time spend: 8 hours
