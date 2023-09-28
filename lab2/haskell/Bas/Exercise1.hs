@@ -25,11 +25,11 @@ validateLTS (q, li, lu, t, q0)
     | length lu /= length (nub lu) = False
     | length (intersect li lu) > 0 = False
     | q0 `notElem` q = False
-    | invalidTransitions (q li lu t q0) = False
+    | invalidTransitions (q, li, lu, t, q0) = False
     | otherwise = True
 
 invalidTransitions :: IOLTS -> Bool
-invalidTransitions (q, li, lu, [(stateOne, label, stateTwo):xs], q0)
+invalidTransitions (q, li, lu, ((stateOne, label, stateTwo):xs), q0)
     | not (elem stateOne q) = False
     | not ((elem label li) || (elem label lu)) = False
     | not (elem stateTwo q) = False
