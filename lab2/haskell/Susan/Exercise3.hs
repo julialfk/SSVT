@@ -15,9 +15,11 @@ main = do
     -- print(generatedIOLTS)
     -- print (prop_Subset generatedIOLTS)
     -- print (take 100 (straces generatedIOLTS))
-    listResult <- generate genDeltaTraces
+    -- listResult <- generate genDeltaTraces
     -- print (take 100 listResult)
     quickCheck (forAll genDeltaTraces prop_DeltaPresent)
+    quickCheck (forAll Ex2.genIOLTSRandom prop_AlphabetCorrect)
+
 
 
 -- 1. Implement a function that returns all suspension traces of a given IOLTS
@@ -86,7 +88,7 @@ genRandomTraces = do
 genDeltaTraces :: Gen [Trace]
 genDeltaTraces = do
     iolt <- Ex2.genIOLTSRandom
-    if deltaStates iolt == []
+    if length (deltaStates iolt) == 0
         then
             genDeltaTraces
         else
@@ -119,6 +121,17 @@ prop_EmptyTrace randomTraces = property (head(randomTraces) == [])
 -- If the IOLTS has any delta states, then 'delta' should occur in at least one of the traces.
 -- This property is tested with the 'genDeltaTraces' generator (because we do need the IOLTS to have a delta state).
 -- ISSUE: tests either fail (when take 200 for instance), or they loop indefinitely (because 'delta' is not found).
--- Ik snap niet waarom er geen delta in zou zitten? We pakken juist heel expliciet straces die wel een delta zouden moeten hebben?
-prop_DeltaPresent :: [Trace] -> Property
-prop_DeltaPresent traces =  property (any ("delta" `elem`) traces)
+-- We don't understand why 'delta' would not be found: is straces wrong? Is the generator wrong? Is this test itself wrong?
+-- When manually testing, this property does seem to work as expected.
+prop_DeltaPresent :: [Trace] -> Bool
+prop_DeltaPresent traces =   (any ("delta" `elem`) (take 200 traces))
+
+-- The labels present in the straces should be part of the input and output alphabet of the IOLTS (or be equal to 'delta')
+-- Because straces in infinite, we take the first 50 elements.
+prop_AlphabetCorrect :: IOLTS -> Property
+prop_AlphabetCorrect inputIOLTS =
+    property (all (\elemInSublist -> elem delta elemInSublist || all (\elem' -> elem' `elem` li || elem' `elem` lu) elemInSublist) outputTraces)
+    where
+        (_, li, lu, _, _) = inputIOLTS
+        outputTraces = take 50 (straces inputIOLTS)
+        
