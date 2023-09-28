@@ -23,33 +23,6 @@ genLabels = do
         then genLabels
         else return (li', lu')
 
--- fillStatesOut :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
--- getAllStatesOutTransition (state:xs) li lu s n = 
-
--- getAllStatesOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
--- getAllStatesOutTransition _ _ _ _ 0 = return []
--- getAllStatesOutTransition q li lu s n = do
---     q1 <- elements q
---     reaction <- li
---     rest <- genLinearInOutTransition q li lu q1 (n - 1)
---     return ((s, reaction, q1) : rest)
-
-genLinearInOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
-genLinearInOutTransition _ _ _ _ 0 = return []
-genLinearInOutTransition q li lu s n = do
-    q1 <- elements q
-    reaction <- if even n then elements li else elements lu
-    rest <- genLinearInOutTransition q li lu q1 (n - 1)
-    return ((s, reaction, q1) : rest)
-
-genLinearTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
-genLinearTransition _ _ _ _ 0 = return []
-genLinearTransition q li lu s n = do
-    q1 <- elements q
-    reaction <- elements (li ++ lu)
-    rest <- genLinearTransition q li lu q1 (n - 1)
-    return ((s, reaction, q1) : rest)
-
 genRandomTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
 genRandomTransition _ _ _ _ 0 = return []
 genRandomTransition q li lu s n = do
