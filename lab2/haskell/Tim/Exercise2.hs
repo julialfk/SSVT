@@ -2,30 +2,32 @@ import Data.List
 import LTS
 import Test.QuickCheck
 
---type IOLTS = ([State], [Label], [Label], [LabeledTransition], State)
+genLabel :: Gen Label
+genLabel = do
+    char <- elements ['a'..'z']
+    return [char]
 
--- genLabel :: Gen Label
--- genLabel = elements ['a'..'z']
+generateLabels :: Gen ([Label], [Label])
+generateLabels = do
+    n <- choose (1, 5)
+    li <- vectorOf n genLabel
+    m <- choose (1, 5)
+    lu <- vectorOf m genLabel
+    if not (null (lu \\ li))
+        then return (li, lu)
+        else generateLabels
 
---q, li, lu, t, q0
-genIOLTS :: Gen ([State], [Label], [Label], [LabeledTransition], State)
+genIOLTS :: Gen IOLTS
 genIOLTS = do
     n <- choose (0, 10)
-    q <- [0..n]
-    li <- elements ['a'..'z']
-    lu <- elements ['a'..'z']
-    -- li <- genLabel
-    -- lu <- genLabel
-    t <- []
-  --q0 <- (shuffle q) !! 0
+    let q = [0..n]
+    (li, lu) <- generateLabels
+    --transitions here
     q0 <- elements q
-    return (q, [li], [lu], t, q0)
+    return (q, li, lu, [], q0)
 
-positiveIntListGenerator :: Gen [Int]
-positiveIntListGenerator = vectorOf 100 (arbitrary `suchThat` (\x -> x > 0))
-
-randomList :: IO [Int]
-randomList = generate positiveIntListGenerator
-
-
-
+main :: IO ()
+main = do
+    putStrLn "Sample IOLTS:"
+    samples <- generate (vectorOf 5 genIOLTS)  -- Generate 5 samples
+    mapM_ print samples
