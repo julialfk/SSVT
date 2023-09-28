@@ -5,6 +5,8 @@ import Data.List
 import LTS
 import Test.QuickCheck
 
+-- Indication of time spent: 9 hours
+
 main :: IO ()
 main = do
     quickCheck (forAll genRandomTraces prop_EmptyTrace)
