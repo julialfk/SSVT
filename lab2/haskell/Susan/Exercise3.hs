@@ -9,15 +9,7 @@ main :: IO ()
 main = do
     quickCheck (forAll genRandomTraces prop_EmptyTrace)
     -- quickCheck (forAll Ex2.genIOLTSOut prop_Subset)
-    -- generatedIOLTS <- generate Ex2.genIOLTSOut  -- Generate an IOLTS
-    -- let (_, _, _, transitions, _) = generatedIOLTS
-    -- print (traces (createLTS transitions))
-    -- print(generatedIOLTS)
-    -- print (prop_Subset generatedIOLTS)
-    -- print (take 100 (straces generatedIOLTS))
-    -- listResult <- generate genDeltaTraces
-    -- print (take 100 listResult)
-    quickCheck (forAll genDeltaTraces prop_DeltaPresent)
+    -- quickCheck (forAll genDeltaTraces prop_DeltaPresent)
     quickCheck (forAll Ex2.genIOLTSRandom prop_AlphabetCorrect)
 
 
@@ -122,7 +114,7 @@ prop_EmptyTrace randomTraces = property (head(randomTraces) == [])
 -- This property is tested with the 'genDeltaTraces' generator (because we do need the IOLTS to have a delta state).
 -- ISSUE: tests either fail (when take 200 for instance), or they loop indefinitely (because 'delta' is not found).
 -- We don't understand why 'delta' would not be found: is straces wrong? Is the generator wrong? Is this test itself wrong?
--- When manually testing, this property does seem to work as expected.
+-- When manually testing, the functionality of this property does work. Perhaps straces uses the wrong searching strategy? (DFS instead of BFS)
 prop_DeltaPresent :: [Trace] -> Bool
 prop_DeltaPresent traces =   (any ("delta" `elem`) (take 200 traces))
 
