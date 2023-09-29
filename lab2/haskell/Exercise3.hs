@@ -15,7 +15,6 @@ main = do
     quickCheck (forAll Ex2.genIOLTSRandom prop_AlphabetCorrect)
 
 
-
 -- 1. Implement a function that returns all suspension traces of a given IOLTS
 
 -- Returns True if the given transition has an output. It has an output if its label
@@ -88,7 +87,6 @@ genDeltaTraces = do
         else
             return (straces iolt)
 
-
 -- 3.3:  Test your straces function using QuickCheck
 
 -- We've built a generator that generates IOLTSs with finite traces, but could contain deltas (see Exercise 2)
@@ -117,6 +115,8 @@ prop_EmptyTrace randomTraces = property (head(randomTraces) == [])
 -- ISSUE: tests either fail (when take 200 for instance), or they loop indefinitely (because 'delta' is not found).
 -- We don't understand why 'delta' would not be found: is straces wrong? Is the generator wrong? Is this test itself wrong?
 -- When manually testing, the functionality of this property does work. Perhaps straces uses the wrong searching strategy? (DFS instead of BFS)
+-- This hypothesis seems wrong, because all the traces gradually build up in length, suggesting that indeed breadth search is used instead
+-- of depth. We really tried with this property, but we are at a loss of what is going wrong.
 prop_DeltaPresent :: [Trace] -> Bool
 prop_DeltaPresent traces =   (any ("delta" `elem`) (take 200 traces))
 
