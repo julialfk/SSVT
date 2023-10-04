@@ -1,6 +1,7 @@
 import Data.List
 import Test.QuickCheck
 import Mutation
+import Text.Printf
 -- import Exercise1and2
 -- import Exercise4
 
@@ -8,18 +9,13 @@ import Mutation
 -- indicating the number of mutants, that visualizes the results of the functions from the
 -- previous exercises.
 
--- resultVisualiser :: Integer -> [([Integer] -> Integer -> Property)] -> (Integer -> [Integer]) -> IO ()
--- resultVisualiser totalNumberOfMutants listOfProperties functionUnderTest = do
---     let survivors = countSurvivors totalNumberOfMutants listOfProperties functionUnderTest
---     let strength = propertySetStrength totalNumberOfMutants listOfProperties functionUnderTest
---     putStrLn ("Tested the given function with " ++ totalNumberOfMutants ++ " mutants.")
---     putStrLn (survivors ++ " survivors (" ++ strength ++ "% killed).")
-
--- resultVisualiser :: Integer -> [([Integer] -> Integer -> Property)] -> (Integer -> [Integer]) -> IO ()
+resultVisualiser :: Integer -> [([Integer] -> Integer -> Property)] -> (Integer -> [Integer]) -> IO ()
 resultVisualiser totalNumberOfMutants listOfProperties functionUnderTest = do
-    let strength = fromIntegral (totalNumberOfMutants - 300) / fromIntegral totalNumberOfMutants * 100
-    putStrLn ("Tested the given function with " ++ show totalNumberOfMutants ++ " mutants.")
-    putStrLn ("300" ++ " survivors (" ++ show strength ++ "% killed).")
+    let survivors = countSurvivors totalNumberOfMutants listOfProperties functionUnderTest
+    let strength = propertySetStrength totalNumberOfMutants listOfProperties functionUnderTest * 100
+    printf "Tested the given function with %d mutants.\n" totalNumberOfMutants
+    printf "%d survivors (%.3f%% killed).\n" survivors percentageKilled
+
 
 -- ghci> testFitSpec
 -- Apparent complete but non-minimal specification based on
