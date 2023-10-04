@@ -36,23 +36,34 @@ countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [In
 countSurvivors n [] f = 0
 countSurvivors n xs f =
     case testAllProps xs f of
-        Just True -> (countSurvivors (n - 1) xs f) + 1
-        Just False -> countSurvivors (n - 1) xs f
+        True -> (countSurvivors (n - 1) xs f) + 1
+        False -> countSurvivors (n - 1) xs f
 
 
-
-testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Maybe Bool
-testAllProps [] _ = Just True
+testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Bool
+testAllProps [] _ = True
 testAllProps (property:xs) f = do
     let input = 1 -- choose(1,100)
     let mutation = addElements -- elements[addElements, removeElements, anyList]
-    let result = mutate mutation property f input
-    result_one <- generate result
-    case result_one of
-        Just True -> testAllProps xs f
-        Just False -> Just False
-        Nothing -> testAllProps xs f
-    
+    result <- generate (mutate mutation property f input)
+    let r = do
+        check <- result
+        case check of 
+          Just True -> testAllProps xs f
+          Just False -> False
+          Nothing -> testAllProps xs f
+    return r
+
+-- Define a property to test using mutate
+-- myProperty :: Integer -> Property
+-- myProperty input =
+--   forAll (mutate arbitraryMutator arbitraryProperty arbitraryFut input) $ \result ->
+--     case result of
+--       Just boolResult -> classify boolResult "Success" $ boolResult === True
+--       Nothing -> classify True "Mutation failed" False
+
+
+
 
 main :: IO ()
 main = do
