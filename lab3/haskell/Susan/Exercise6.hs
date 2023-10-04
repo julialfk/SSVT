@@ -2,8 +2,10 @@ import Data.List
 import Test.QuickCheck
 import Mutation
 import Text.Printf
--- import Exercise1and2
--- import Exercise4
+import Exercise1and2
+import Exercise4
+
+-- Time spent so far: 30 minutes
 
 -- Create a function that we pass the function under test, a set of properties, and a number
 -- indicating the number of mutants, that visualizes the results of the functions from the
@@ -17,6 +19,9 @@ resultVisualiser totalNumberOfMutants listOfProperties functionUnderTest = do
     printf "%d survivors (%.3f%% killed).\n" survivors percentageKilled
 
 
+-- #############################################################
+-- VISUALISATION EXAMPLE FROM FITSPEC
+-- #############################################################
 -- ghci> testFitSpec
 -- Apparent complete but non-minimal specification based on
 -- 4000 test cases for each of properties 1, 2, 3, 4 and 5
@@ -28,3 +33,4 @@ resultVisualiser totalNumberOfMutants listOfProperties functionUnderTest = do
 -- conjectures:  {3}   ==> {5}     96% killed (weak)
 --               {2,4} ==> {5}     99% killed (weak)
 --               {3,4} ==> {2}     99% killed (weak)
+-- #############################################################
