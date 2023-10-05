@@ -4,6 +4,7 @@ import Test.QuickCheck
 import Mutation
 import MultiplicationTable
 import Data.Maybe
+import Control.Monad (liftM)
 
 -- Replace nth element in list
 replace :: [a] -> (Int, a) -> [a]
@@ -35,17 +36,27 @@ charList xs = do
     return chars
 
 
-countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Integer
+countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
 countSurvivors 0 xs f = 0
 countSurvivors n xs f = do
-    let properties = xs
+    result <- mutateFunction xs f
+    points <- isKilled result
+    return (countSurvivors (n-1) xs f) + points
+
+isKilled :: IO Bool -> IO Int
+isKilled action = do
+    result <- action
+    return $ if result then 1 else 0
+
+mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
+mutateFunction xs f = do
     let input = 10
     let mutation = addElements -- [addElements, removeElements, anyList]
-    let result = generate (mutate' addElements xs f 10)
-    case (fmap (elem False) result) of
-        True -> countSurvivors (n - 1) xs f
-        False -> (countSurvivors (n - 1) xs f) + 1
+    result <- mutate' mutation xs f input
+    return (all (== True) result)
 
+
+-- mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer])
 
 -- testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Bool
 -- testAllProps [] _ = True
