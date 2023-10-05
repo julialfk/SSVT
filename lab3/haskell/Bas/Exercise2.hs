@@ -4,15 +4,14 @@ import Test.QuickCheck
 import Mutation
 import MultiplicationTable
 import Data.Maybe
-import Control.Monad (liftM)
 
 -- Counts the surviving mutations that will not fail the properties
-countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
+countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Integer
 countSurvivors n xs f = do
     survivors <- generate $ vectorOf n (getSurvived xs f)
     return (sum survivors)
 
--- Gets the surviving mutations
+-- Tests if a result is killed when mutating the output and looking at different properties.
 getSurvived :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
 getSurvived xs f = do
   result <- mutateFunction xs f
