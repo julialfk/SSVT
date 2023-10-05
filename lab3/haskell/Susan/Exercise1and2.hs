@@ -33,26 +33,26 @@ charList xs = do
     chars <- arbitrary :: Gen [Char]
     return chars
 
-countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Integer
-countSurvivors n [] f = 0
-countSurvivors n xs f =
-    case testAllProps xs f of
-        Just True -> (countSurvivors (n - 1) xs f) + 1
-        Just False -> countSurvivors (n - 1) xs f
+-- countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Integer
+-- countSurvivors n [] f = 0
+-- countSurvivors n xs f =
+--     case testAllProps xs f of
+--         Just True -> (countSurvivors (n - 1) xs f) + 1
+--         Just False -> countSurvivors (n - 1) xs f
 
 
 
-testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Maybe Bool
-testAllProps [] _ = Just True
-testAllProps (property:xs) f = do
-    let input = 1 -- choose(1,100)
-    let mutation = addElements -- elements[addElements, removeElements, anyList]
-    let result = mutate mutation property f input
-    result_one <- generate result
-    case result_one of
-        Just True -> testAllProps xs f
-        Just False -> Just False
-        Nothing -> testAllProps xs f
+-- testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Maybe Bool
+-- testAllProps [] _ = Just True
+-- testAllProps (property:xs) f = do
+--     let input = 1 -- choose(1,100)
+--     let mutation = addElements -- elements[addElements, removeElements, anyList]
+--     let result = mutate mutation property f input
+--     result_one <- generate result
+--     case result_one of
+--         Just True -> testAllProps xs f
+--         Just False -> Just False
+--         Nothing -> testAllProps xs f
     
 
 main :: IO ()
