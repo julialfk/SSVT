@@ -1,3 +1,5 @@
+module Exercise2 where
+
 import Data.List
 import Test.QuickCheck
 import Mutation
@@ -33,6 +35,7 @@ charList xs = do
     chars <- arbitrary :: Gen [Char]
     return chars
 
+-- number of mutants -> list met properties -> function under test -> hoeveelheid survivors
 countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Integer
 countSurvivors n [] f = 0
 countSurvivors n xs f =
