@@ -23,19 +23,6 @@ changeElement xs = do
 emptyList :: [a] -> Gen [b]
 emptyList _ = return []
 
--- Return an integer instead of list
-notAList :: [Int] -> Gen Int
-notAList xs = do
-    num <- arbitrary :: Gen Int
-    return num
-
--- Change a list of ints to a list of chars
-charList :: [Int] -> Gen [Char]
-charList xs = do
-    chars <- arbitrary :: Gen [Char]
-    return chars
-
--- Assuming countSurvivors returns IO [Int]
 countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
 countSurvivors n xs f = do
     survivors <- generate $ vectorOf 4000 (getSurvived xs f)
@@ -49,40 +36,14 @@ getSurvived xs f = do
 
 isKilled :: Bool -> Gen Int
 isKilled action = do
-    -- result <- action
     return $ if action then 1 else 0
 
 mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
 mutateFunction xs f = do
-    let input = 10
-    let mutation = addElements -- [addElements, removeElements, anyList]
+    input <- choose(0,100)
+    mutation <- elements [addElements, removeElements, anyList]
     result <- mutate' mutation xs f input
-    return (all (== True) result)
-
-
--- mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer])
-
--- testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Bool
--- testAllProps [] _ = True
--- testAllProps (property:xs) f = do
---     let input = 1 -- choose(1,100)
---     let mutation = addElements -- elements[addElements, removeElements, anyList]
---     let result = generate (mutate' mutation [property] f input)
---     case result of 
---         [True] -> testAllProps xs f
---         [False] -> False
---         [] -> testAllProps xs f
-
--- Define a property to test using mutate
--- myProperty :: Integer -> Property
--- myProperty input =
---   forAll (mutate arbitraryMutator arbitraryProperty arbitraryFut input) $ \result ->
---     case result of
---       Just boolResult -> classify boolResult "Success" $ boolResult === True
---       Nothing -> classify True "Mutation failed" False
-
-
-
+    if (length result) == 0 then return False else return (all (== True) result)
 
 main :: IO ()
 main = do
