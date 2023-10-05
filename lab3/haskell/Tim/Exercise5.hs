@@ -1,1 +1,0 @@
--- als de properties beiden falen op meerdere mutations
