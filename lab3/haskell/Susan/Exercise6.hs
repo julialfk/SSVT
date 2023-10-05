@@ -4,7 +4,7 @@ import Data.List
 import Test.QuickCheck
 import Mutation
 import Text.Printf
-import Exercise1and2
+import Exercise1
 import Exercise4
 
 -- Time spent so far: 30 minutes
