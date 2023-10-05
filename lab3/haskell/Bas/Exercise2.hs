@@ -6,23 +6,6 @@ import MultiplicationTable
 import Data.Maybe
 import Control.Monad (liftM)
 
--- Replace nth element in list
-replace :: [a] -> (Int, a) -> [a]
-replace xs (i, e) = before ++ [e] ++ after
-  where
-    (before, _:after) = splitAt i xs
-
--- Mutate a list by changing one element
-changeElement :: [Integer] -> Gen [Integer]
-changeElement xs = do
-  num <- arbitrary :: Gen Integer
-  index <- choose (0, length xs - 1)
-  return (replace xs (index, num))
-
--- Return an empty list
-emptyList :: [a] -> Gen [b]
-emptyList _ = return []
-
 -- Counts the surviving mutations that will not fail the properties
 countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
 countSurvivors n xs f = do
@@ -40,10 +23,16 @@ isKilled :: Bool -> Gen Int
 isKilled action = do
     return $ if action then 1 else 0
 
--- Chooses an input for the function, 
+-- Chooses an input for the function, chooses how to mutate the output, takes the results of mutate' to see if
+-- all properties came back positive using this mutation.
 mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
 mutateFunction xs f = do
     input <- choose(0,100)
     mutation <- elements [addElements, removeElements, anyList]
     result <- mutate' mutation xs f input
     if length result == 0 then return False else return (all (== True) result)
+
+-- Time spent: 
+-- Tim: 6 hours
+-- Bas: 8 hours
+--
