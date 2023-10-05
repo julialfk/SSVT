@@ -24,7 +24,7 @@ emptyList :: [a] -> Gen [b]
 emptyList _ = return []
 
 -- Counts the surviving mutations that will not fail the properties
-countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
+countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
 countSurvivors n xs f = do
     survivors <- generate $ vectorOf n (getSurvived xs f)
     return (sum survivors)
@@ -40,7 +40,7 @@ isKilled :: Bool -> Gen Int
 isKilled action = do
     return $ if action then 1 else 0
 
---
+-- Chooses an input for the function, 
 mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
 mutateFunction xs f = do
     input <- choose(0,100)
