@@ -2,6 +2,7 @@ import Data.List
 import Test.QuickCheck
 import Mutation
 import MultiplicationTable
+import Data.Maybe
 
 -- Replace nth element in list
 replace :: [a] -> (Int, a) -> [a]
@@ -32,27 +33,29 @@ charList xs = do
     chars <- arbitrary :: Gen [Char]
     return chars
 
+
 countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Integer
-countSurvivors n [] f = 0
-countSurvivors n xs f =
-    case testAllProps xs f of
-        True -> (countSurvivors (n - 1) xs f) + 1
-        False -> countSurvivors (n - 1) xs f
+countSurvivors 0 xs f = 0
+countSurvivors n xs f = do
+    let properties = xs
+    let input = 10
+    let mutation = addElements -- [addElements, removeElements, anyList]
+    let result = generate (mutate' addElements xs f 10)
+    case (fmap (elem False) result) of
+        True -> countSurvivors (n - 1) xs f
+        False -> (countSurvivors (n - 1) xs f) + 1
 
 
-testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Bool
-testAllProps [] _ = True
-testAllProps (property:xs) f = do
-    let input = 1 -- choose(1,100)
-    let mutation = addElements -- elements[addElements, removeElements, anyList]
-    result <- generate (mutate mutation property f input)
-    let r = do
-        check <- result
-        case check of 
-          Just True -> testAllProps xs f
-          Just False -> False
-          Nothing -> testAllProps xs f
-    return r
+-- testAllProps :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Bool
+-- testAllProps [] _ = True
+-- testAllProps (property:xs) f = do
+--     let input = 1 -- choose(1,100)
+--     let mutation = addElements -- elements[addElements, removeElements, anyList]
+--     let result = generate (mutate' mutation [property] f input)
+--     case result of 
+--         [True] -> testAllProps xs f
+--         [False] -> False
+--         [] -> testAllProps xs f
 
 -- Define a property to test using mutate
 -- myProperty :: Integer -> Property
