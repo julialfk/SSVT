@@ -4,7 +4,6 @@ import Test.QuickCheck
 import Mutation
 import MultiplicationTable
 import Data.Maybe
-import Control.Monad (liftM)
 
 -- Counts the surviving mutations that will not fail the properties
 countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
