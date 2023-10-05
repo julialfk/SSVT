@@ -37,16 +37,18 @@ charList xs = do
 
 
 countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
-countSurvivors 0 xs f = 0
-countSurvivors n xs f = do
+countSurvivors n xs f = generate $ vectorOf 4000 (getSurvived xs f)
+
+getSurvived :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
+getSurvived xs f = do
     result <- mutateFunction xs f
     points <- isKilled result
-    return (countSurvivors (n-1) xs f) + points
+    return points
 
-isKilled :: IO Bool -> IO Int
+isKilled :: Bool -> Gen Int
 isKilled action = do
-    result <- action
-    return $ if result then 1 else 0
+    -- result <- action
+    return $ if action then 1 else 0
 
 mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
 mutateFunction xs f = do
