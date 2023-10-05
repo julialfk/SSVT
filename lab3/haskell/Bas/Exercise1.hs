@@ -15,4 +15,19 @@ changeElement xs = do
 emptyList :: [a] -> Gen [b]
 emptyList _ = return []
 
+-- Adds elements to the beginning of an output list
+addElementsToBegin :: [Integer] -> Gen [Integer]
+addElements xs = do
+  nums <- arbitrary :: Gen [Integer]
+  return $ nums ++ xs
+
+-- Adds elements to the end of an output list
+addElementsToEnd :: [Integer] -> Gen [Integer]
+addElements xs = do
+  nums <- arbitrary :: Gen [Integer]
+  return $ xs ++ nums
+
 -- Time spent: 1 hour
+-- Some other possible mutations:
+-- Reverse list
+-- Randomize list

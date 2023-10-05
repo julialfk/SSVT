@@ -17,13 +17,14 @@ getSurvived xs f = do
   result <- mutateFunction xs f
   isKilled result
 
--- Returns if an mutation is killed, or survived
+-- Return 1 if a mutation survived, 0 if not.
 isKilled :: Bool -> Gen Int
 isKilled action = do
     return $ if action then 1 else 0
 
 -- Chooses an input for the function, chooses how to mutate the output, takes the results of mutate' to see if
--- all properties came back positive using this mutation.
+-- all properties came back positive using this mutation. Returns False if not or if nothing was changed by
+-- mutation
 mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
 mutateFunction xs f = do
     input <- choose(0,100)
