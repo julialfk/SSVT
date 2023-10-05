@@ -1,6 +1,6 @@
 module Exercise5 where
 
-import Exercise1and2
+import Exercise2
 import Data.List
 import Test.QuickCheck
 import Mutation
