@@ -35,9 +35,11 @@ charList xs = do
     chars <- arbitrary :: Gen [Char]
     return chars
 
-
-countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
-countSurvivors n xs f = generate $ vectorOf 4000 (getSurvived xs f)
+-- Assuming countSurvivors returns IO [Int]
+countSurvivors :: Integer -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
+countSurvivors n xs f = do
+    survivors <- generate $ vectorOf 4000 (getSurvived xs f)
+    return (sum survivors)
 
 getSurvived :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
 getSurvived xs f = do
