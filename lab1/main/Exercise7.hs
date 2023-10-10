@@ -102,7 +102,7 @@ genForm = sized formGenerator
     formGenerator 0 = do
       n <- arbitrary
       return (Prop n)
-    formGenerator n = oneof
+      formGenerator n = oneof
       [ do
             f <- formGenerator (n - 1)
             return (Neg f)

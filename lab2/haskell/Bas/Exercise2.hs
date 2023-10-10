@@ -16,27 +16,12 @@ import Data.Char
 --   --q0 <- (shuffle q) !! 0
 --     return (q, [li], [lu], t, q0)
 
-
-genTransition :: [State] -> [Label] -> [State] -> State -> Int -> Gen ([(State, Label, State)])
--- genTransition q li lu s n = do
---     q_new <- elements q
---     if not (even n) then
---         let reaction = elements li
---     else
---         let reaction = elements lu 
---     if n == 0 then
---         return ([(s, reaction, q_new)])
---     else
---         return genTransition q li lu q_new (n - 1) ++ ([(s, reaction, q_new)])
-
-genTransition q li lu s n =
-    do 
-        if n == 0 then
-            return ([(s, reaction, q_new)])
-        else
-            return (genTransition q li lu q_new (n - 1) ++ ([(s, reaction, q_new)]))
-    where 
-        if not (even n) then
-            let reaction = elements li
-        else
-            reaction = elements lu  
+genTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
+genTransition q li lu s n = do
+    q_new <- elements q
+    let reaction = if even n then elements lu else elements li
+    if n == 0
+        then return [(s, reaction, q_new)]
+        else do
+            rest <- genTransition q li lu q_new (n - 1)
+            return $ (s, reaction, q_new) : rest

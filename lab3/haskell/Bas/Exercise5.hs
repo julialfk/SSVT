@@ -29,12 +29,9 @@ main = do
     let props = multiplicationTableProps
     let mutations = mutators
 
-    results <- forM (zip [1..] props) $ \(index1, prop) -> do
-        putStrLn $ "Now testing property " ++ show index1 ++ ":"
+    results <- forM (zip [1..] props) $ \(index, prop) -> do
+        putStrLn $ "Now testing property " ++ show index
         let tests = propertyEquivalenceTester prop multiplicationTableProps mutations multiplicationTable
-        forM (zip [1..] tests) $ \(index2, test) -> do
-            result <- generate test
-            putStrLn $ " - with property " ++ show index2 ++ ": " ++ show result
-            return result
+        forM tests $ \test -> generate test
 
     print results

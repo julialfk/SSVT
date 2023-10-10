@@ -67,10 +67,10 @@ prop_startInStates (q, li, lu, t, q0) = property (q0 `elem` q)
 -- List of factors that invalidate an IOLTS
 -- 1. Start state not in list of states
 -- 2. Empty list of states
--- 3. Transitions to states that aren't in state list
--- 4. Duplicate labels
--- 5. Duplicate states
--- 6. The next transition doesn't continue on previous next state
+-- 3. Empty lists of labels
+-- 4. Transitions to states that aren't in state list
+-- 5. Duplicate labels
+-- 6. Duplicate states
 -- 7. Input labels and output labels overlap eachother
 
 -- Exercise 2 will have the test report, as the tests of these properties were performed there

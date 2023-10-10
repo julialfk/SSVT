@@ -4,27 +4,27 @@ import Test.QuickCheck
 import Mutation
 import MultiplicationTable
 import Data.Maybe
+import Control.Monad (liftM)
 
 -- Counts the surviving mutations that will not fail the properties
-countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Integer
+countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
 countSurvivors n xs f = do
     survivors <- generate $ vectorOf n (getSurvived xs f)
     return (sum survivors)
 
--- Tests if a result is killed when mutating the output and looking at different properties.
+-- Gets the surviving mutations
 getSurvived :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Int
 getSurvived xs f = do
   result <- mutateFunction xs f
   isKilled result
 
--- Return 1 if a mutation survived, 0 if not.
+-- Returns if an mutation is killed, or survived
 isKilled :: Bool -> Gen Int
 isKilled action = do
     return $ if action then 1 else 0
 
 -- Chooses an input for the function, chooses how to mutate the output, takes the results of mutate' to see if
--- all properties came back positive using this mutation. Returns False if not or if nothing was changed by
--- mutation
+-- all properties came back positive using this mutation.
 mutateFunction :: [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> Gen Bool
 mutateFunction xs f = do
     input <- choose(0,100)
@@ -35,4 +35,4 @@ mutateFunction xs f = do
 -- Time spent: 
 -- Tim: 6 hours
 -- Bas: 8 hours
--- We got stuck on unpacking gen/io bools for a long time. Eventually we decided not to unpack them.
+--
