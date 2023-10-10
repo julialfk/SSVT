@@ -5,6 +5,7 @@ import Test.QuickCheck
 import Mutation
 import MultiplicationTable
 import System.Random
+import Debug.Trace
 
 -- Implement function(s) that calculate the conjectures: properties that are equivalent, whose
 -- cases are subsets of other properties, etc.

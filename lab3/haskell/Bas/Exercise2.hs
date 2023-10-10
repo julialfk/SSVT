@@ -1,4 +1,4 @@
-module Exercise1and2 where
+module Exercise2 where
 import Data.List
 import Test.QuickCheck
 import Mutation
@@ -35,4 +35,4 @@ mutateFunction xs f = do
 -- Time spent: 
 -- Tim: 6 hours
 -- Bas: 8 hours
---
+-- We got stuck on unpacking gen/io bools for a long time. Eventually we decided not to unpack them.

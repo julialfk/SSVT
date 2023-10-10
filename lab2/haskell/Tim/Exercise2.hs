@@ -12,6 +12,9 @@ genLabel = do
     return [char]
 
 -- Generator: Generates input and output labels for the LTS
+-- Chooses random number of labels from 1 to 5, generates this number of random
+-- generated labels using genLabel. Then checks foor duplicates within the list
+-- And uniqueness in both lists.
 genLabels :: Gen ([Label], [Label])
 genLabels = do
     n <- choose (1, 5)
@@ -26,6 +29,19 @@ genLabels = do
     if not (null commonElements)
         then genLabels
         else return (li', lu')
+
+-- Generator: Generates random transitions for LTS
+-- All transition generators work about the same; take a random begin state, then a random next state
+-- pick a random input or output label. Do this until the number of transition set by n have been 
+-- generated.
+genRandomTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
+genRandomTransition _ _ _ _ 0 = return []
+genRandomTransition q li lu s n = do
+    q1 <- elements q
+    q2 <- elements q
+    reaction <- elements (li ++ lu)
+    rest <- genRandomTransition q li lu q1 (n - 1)
+    return ((q1, reaction, q2) : rest)
 
 -- Generator: Generates linear (not a tree, but linked-list like) transitions for LTS that rotates the input and output
 genLinearInOutTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
@@ -45,17 +61,8 @@ genLinearTransition q li lu s n = do
     rest <- genLinearTransition q li lu q1 (n - 1)
     return ((s, reaction, q1) : rest)
 
--- Generator: Generates random transitions for LTS
-genRandomTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
-genRandomTransition _ _ _ _ 0 = return []
-genRandomTransition q li lu s n = do
-    q1 <- elements q
-    q2 <- elements q
-    reaction <- elements (li ++ lu)
-    rest <- genRandomTransition q li lu q1 (n - 1)
-    return ((q1, reaction, q2) : rest)
-
 -- Generator: Generates invalid transitions, that are not possible
+-- Invalid part: the chosen states are not in the states provided,
 genInvalidTransition :: [State] -> [Label] -> [Label] -> State -> Int -> Gen [(State, Label, State)]
 genInvalidTransition _ _ _ _ 0 = return []
 genInvalidTransition q li lu s n = do
@@ -66,6 +73,10 @@ genInvalidTransition q li lu s n = do
     return ((q1, reaction, q2) : rest)
 
 -- Generator: Generates random IOLTS
+-- The gen IOLTS also works the same for all generators, with
+-- slight differences. First generate the amount of states to be made, then fill
+-- a list from stae 0 to n. Generate all labels using the genLabels function. Next
+-- Randomly pick how many transitions should be made and generate these as well.
 genIOLTSRandom :: Gen IOLTS
 genIOLTSRandom = do
     n <- choose (0, 10)
@@ -99,6 +110,8 @@ genIOLTSLinear = do
     return (q, li, lu, t, q0)
 
 -- Generator: Generates IOLTS that are not valid
+-- The invalid parts here are: duplicate states, invalid starting state
+-- and input labels are the exact same as the output labels.
 genIOLTSInvalid :: Gen IOLTS
 genIOLTSInvalid = do
     n <- choose (0, 10)
@@ -166,4 +179,26 @@ main = do
     quickCheck (forAll genIOLTSLinear prop_startInStates)
     quickCheck (forAll genIOLTSInvalid prop_startInStates)
 
-    -- Time spend: 8 hours
+-- Time spend: 8 hours
+
+-- We tested the following properties:
+-- 1. Start state is not null
+-- 2. Not an empty list of input labels
+-- 3. Not an empty list of output labels
+-- 4. No transitions to states that aren't in state list
+-- 5. No duplicate labels
+-- 6. No duplicate states
+-- 7. The next transition doesn't continue on previous next state
+-- 8. Input labels and output labels overlap eachother
+-- 9. Start state should be in state lists
+--
+-- We used multiple generators:
+-- Linear transitions generator
+-- Linear transitions generator with input then output in states
+-- Completely random generator
+-- Completely invalid generator
+-- 
+-- The invalid generators all fail on the following properties:
+--No duplicate states
+-- No duplicate labels
+-- No transitions to states that aren't in state list
