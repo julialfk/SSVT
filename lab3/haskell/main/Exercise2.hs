@@ -6,6 +6,10 @@ import MultiplicationTable
 import Data.Maybe
 import Control.Monad (liftM)
 
+-- To count the surviving mutations n amount of times, the mutate function gets
+-- used on n amount of mutations to the output of function f. These mutations
+-- get tested on all the properties in the given list of properties.
+
 -- Counts the surviving mutations that will not fail the properties
 countSurvivors :: Int -> [([Integer] -> Integer -> Bool)] -> (Integer -> [Integer]) -> IO Int
 countSurvivors n xs f = do
