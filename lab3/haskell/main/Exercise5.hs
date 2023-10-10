@@ -4,8 +4,9 @@ import Data.List
 import Test.QuickCheck
 import Mutation
 import MultiplicationTable
-import System.Random
 import Control.Monad (forM)
+
+-- Time spent: 7 hrs
 
 -- Implement function(s) that calculate the conjectures: properties that are equivalent, whose
 -- cases are subsets of other properties, etc.
@@ -21,6 +22,13 @@ mutateEquivalence (prop1, prop2) mutate f = do
     result2 <- mutate' mutate [prop2] f input
     return (result1 == result2)
 
+-- This function unpacks the properties and mutations, it then uses the for monad to loop over the properties and
+-- mutations. To keep track of the index it uses a zip, and with multiple mutations it tests them all over the properties
+-- you can see the results, if all values are True in the terminal under the equation (these are the different mutations being
+-- tested on the property equation), then the property is equivalent with the other property that is being tested.
+--
+-- Unfortunately, it is not working perfectly yet, we think this is due to the generator (we use Gen Bool and need to print the
+-- non IO value). We have used the multiplication table example that is provided in the assignment.
 main :: IO ()
 main = do
     let props = multiplicationTableProps
