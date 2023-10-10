@@ -21,20 +21,17 @@ mutateEquivalence (prop1, prop2) mutate f = do
     result2 <- mutate' mutate [prop2] f input
     return (result1 == result2)
 
-propertyEquivalenceTester :: ([Integer] -> Integer -> Bool) -> [([Integer] -> Integer -> Bool)] -> [([Integer] -> Gen [Integer])] -> (Integer -> [Integer]) -> [Gen Bool]
-propertyEquivalenceTester prop1 props mutations f = [mutateEquivalence (prop1, prop2) mutate f | prop2 <- props, mutate <- mutations]
-
 main :: IO ()
 main = do
     let props = multiplicationTableProps
     let mutations = mutators
 
-    results <- forM (zip [1..] props) $ \(index1, prop) -> do
-        putStrLn $ "Now testing property " ++ show index1 ++ ":"
-        let tests = propertyEquivalenceTester prop multiplicationTableProps mutations multiplicationTable
-        forM (zip [1..] tests) $ \(index2, test) -> do
-            result <- generate test
-            putStrLn $ " - with property " ++ show index2 ++ ": " ++ show result
-            return result
+    results <- forM (zip [1..] props) $ \(index, prop1) -> do
+        putStrLn $ "Now testing property " ++ show index
+        forM (zip [1..] props) $ \(otherIndex, prop2) -> do
+            putStrLn $ "Testing property " ++ show index ++ " with property " ++ show otherIndex
+            forM mutations $ \mutate -> do
+                result <- generate (mutateEquivalence (prop1, prop2) mutate multiplicationTable)
+                print result
 
     print results
