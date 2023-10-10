@@ -4,8 +4,6 @@ import Data.List
 import Test.QuickCheck
 import Mutation
 import MultiplicationTable
-import System.Random
-import Control.Monad (forM)
 
 -- Time spent: 7 hrs
 
