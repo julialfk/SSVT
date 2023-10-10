@@ -7,12 +7,29 @@ import MultiplicationTable
 
 -- Time spent: 7 hrs
 
+-- We set out to find the conjecture of properties being equal to one another.
+-- The idea here was to find all the properties in a testing suit (defined as a list of properties) that are equal to each other.
+-- Equality would be established if two properties, for all the same mutators and inputs, gave the same result. This result can be
+-- False, True, or an empty list (see the documentation of the mutate' function).
+-- To find out whether two properties have the same result for one instance of a mutator and input, the 'mutateEquivalence' function is
+-- used. To establish equivalence we of course have to test a lot more cases than just one mutator with one input. We have to
+-- systematically go over a lot of different input/mutator combinations with the same two properties, and see if they
+-- are always the same (mutateEquivalence returns True). So create a list of mutateEquivalence' output, and if all (==True), then these
+-- two properties are equal. We have to generate such a list for all the different combinations of two properties that
+-- can be formed out of the list of different properties of the testing suit. In the end we could output all the pairs of properties that
+-- are equal. We possibly would have to filter our output first, because we can imagine it showing the same pairs twice:
+-- once as (prop_1, prop_2) and once as (prop_2, prop_1). This of course, for our purposes, means the same combination of properties.
+-- Some other filtering could be done for cases such as (prop_1, prop_2), (prop_1, prop_3), (prop_2, prop_3), in which multiple properties
+-- are equal to each other.
+
+-- You can see our attempt for equality below. Please mind that it does not work.
+
 -- This function gets two properties and uses the mutate function on them, it then checks if the results are the same. It returns a Gen Bool.
 mutateEquivalence :: (([Integer] -> Integer -> Bool), ([Integer] -> Integer -> Bool)) -> ([Integer] -> Gen [Integer]) -> (Integer -> [Integer]) -> Gen Bool
-mutateEquivalence (prop1, prop2) mutate f = do
+mutateEquivalence (prop1, prop2) mutator f = do
     input <- choose(0,100)
-    result1 <- mutate' mutate [prop1] f input
-    result2 <- mutate' mutate [prop2] f input
+    result1 <- mutate' mutator [prop1] f input
+    result2 <- mutate' mutator [prop2] f input
     return (result1 == result2)
 
 -- This function unpacks the properties and mutations, it then uses the for monad to loop over the properties and
