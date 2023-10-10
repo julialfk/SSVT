@@ -8,13 +8,7 @@ import Control.Monad (forM)
 
 -- Time spent: 7 hrs
 
--- Implement function(s) that calculate the conjectures: properties that are equivalent, whose
--- cases are subsets of other properties, etc.
-
--- Input: listOfProperties, numberOfMutants, functionUnderTest
--- Output: a list of which each element is a list of properties. For the list of properties: properties that are equivalent are in the
--- same list. Properties that are not equivalent to any other property are in a singleton list.
--- Properties are equivalent when they kill the exact same mutants, and when the exact same mutants survive under both properties.
+-- This function gets two properties and uses the mutate function on them, it then checks if the results are the same. It returns a Gen Bool.
 mutateEquivalence :: (([Integer] -> Integer -> Bool), ([Integer] -> Integer -> Bool)) -> ([Integer] -> Gen [Integer]) -> (Integer -> [Integer]) -> Gen Bool
 mutateEquivalence (prop1, prop2) mutate f = do
     input <- choose(0,100)
