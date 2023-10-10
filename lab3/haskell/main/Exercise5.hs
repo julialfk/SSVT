@@ -50,4 +50,4 @@ main = do
   let props = multiplicationTableProps
   let mutations = mutators
   testResults <- propertyEquivalenceTester props mutations
-  putStrLn "Finished"
+  putStrLn "Finished!"
