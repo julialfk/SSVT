@@ -68,7 +68,7 @@ findSubsets nMutants func totalStrength (i:inputSubsets) outputSubsets = do
         then findSubsets nMutants func totalStrength inputSubsets outputSubsets
         else findSubsets nMutants func totalStrength inputSubsets (i:outputSubsets)
 
--- Simple test main to check if everything at runs.
+-- Simple test main to check if everything runs.
 -- Unfortunately, the function does not work properly, since the length is always 0 no matter the property list.
 -- I did not have enough time to find the bug and fix it, but at least the function runs.
 main3 :: IO Int
