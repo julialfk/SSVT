@@ -1,5 +1,3 @@
-import Test.QuickCheck
-
 module Exercise6 where
 import Data.List
 import Test.QuickCheck
