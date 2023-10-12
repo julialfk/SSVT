@@ -5,6 +5,8 @@ import SetOrd
 
 -- Properties for symClos:
 -- If x,y in set, y,x should be there too
+-- Does it have duplicates
+-- Is it ordered
 type Rel a = [(a,a)]
 
 genRelation :: Gen [(Int, Int)]
