@@ -1,10 +1,13 @@
 module Exercise4 where
+
 import Test.QuickCheck
 import Control.Monad
 import Data.Set (fromList, toList)
 import Data.List
 
 type Rel a = [(a,a)]
+
+-- Time Spent: 300 min
 
 main :: IO ()
 main = do
@@ -17,7 +20,7 @@ isSerial :: Eq a => [a] -> Rel a -> Bool
 isSerial domain relation = all (\x -> any (\(x', y) -> x' == x) relation) domain
 
 -- Any non-empty domain under an empty relation, should return false. Input for this function
--- should come from 'G=genNonEmptyDomain'
+-- should come from 'genNonEmptyDomain'
 prop_EmptyList :: Eq a => [a] -> Property
 prop_EmptyList domain = property ((isSerial domain []) == False)
 
@@ -56,30 +59,47 @@ genReflexiveDomainsAndRelations = do
 -- WHETHER AND WHEN R IS SERIAL
 -- Modulo is defined as the non-negative remainder after division. This means that x and y will never be negative.
 -- This means that per definition, R cannot be serial if the domain includes negative numbers, because it violates the rules of R.
--- However, if the domain is all positive integers, then R is serial. [EXPLAIN INTUITION]
+-- However, if the domain is all positive integers, then R is serial.
 
 -- PROOF THAT IT IS SERIAL
--- We can formally prove this [SHOW FORMAL PROOF]
+-- We can formally proof this as such:
+    -- let x be an arbitrary element of the domain A.
+    -- let y be x (the y from xRy can just be x again, since their only constraint is that they both should be in A)
+    -- then: x mod n == y mod n (because x == n)
+    -- because this is true for any arbitrary x, R must be serial
 
 -- TEST THAT IT IS SERIAL
 -- We can test this by using our isSerial function, in combination with a generator. This generator accepts
--- a domain with non-negative numbers, and then computes all the corresponding (x,y) pairs as defined by the modulo.
+-- a domain consisting of non-negative numbers, and then computes all the corresponding (x,y) pairs as defined by the modulo.
 
+-- Generates a domain (i.e. a list of integers) that consists only of non-negative numbers. See comments below for more details
 genNonNegativeDomain :: Gen [Int]
 genNonNegativeDomain = do
+    -- The generated int has to be larger than 0 for the domain to be valid
     let genInt = (arbitrary :: Gen Int) `suchThat` (> 0)
-    l <- choose(2, 150) -- explain de 200 (was eerst 100 maar door nub verlies je weer waardes), denk aan performance
+    -- l is the length of the domain. At first, l was set to 100 (kinda long, but not too long to harm performance)
+    -- Because genInt can generate duplicate numbers, which isn't valid for the purpose of our domain, we filter
+    -- out those duplices later. However, this makes the length of our domain smaller again. This is why we increased the l
+    -- to 125 to counter this effect.
+    l <- choose(2, 125)
+    -- The domain for now will be l(enght) number of generated integers that are larger than 0
     domain <- vectorOf l genInt
+    -- To remove duplicates, we call nub and we are left with the u(nique)Domain
     let uDomain = nub domain
-    if length uDomain < 2 then genNonNegativeDomain else return uDomain
-
+    -- We first checked for the length of the generated domain (if length uDomain < 2 then genNonNegativeDomain else return uDomain),
+    -- but after later investigation this wasn't in fact necessary, because an empty domain will generate an empty relation, which
+    -- together are serial, and a domain consisting of exactly one element, will create the identity relation of that element, which is
+    -- also serial on that domain. So we removed the check and we just return the uDomain as is.
+    return uDomain
 
 -- Given a domain, this function creates the modulo relation as defined in the exercise. For n we use [1..maximum domain],
--- where maximum domain is the largest number in the domain. We picked this over maxBound, because 
+-- where maximum domain is the largest number in the domain. We picked this over maxBound, because keeping in mind the property of
+-- modulo, it does not make sense to go beyond the range of the domain. Duplicates are removed to ensure a proper relation is returned.
 moduloRelation :: [Int] -> [(Int, Int)]
 moduloRelation domain = removeDuplicates [(x,y) | x <- domain, y <- domain, n <- [1..(maximum domain)], y `mod` n == x `mod` n]
 
-
+-- Generates an arbitrary domain consisting of only non-negative numbers, and its corresponding modulo relation.
+-- Does so by calling 'genNonNegativeDomain' and 'moduloRelation'.
 genModuloDomainsAndRelations :: Gen ([Int], [(Int, Int)])
 genModuloDomainsAndRelations = do
     domain <- genNonNegativeDomain
