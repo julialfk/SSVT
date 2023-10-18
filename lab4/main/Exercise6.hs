@@ -3,7 +3,6 @@ module Exercise6 where
 import Data.List
 import Test.QuickCheck
 import SetOrd
-import qualified Control.Arrow as closures
 
 -- Time spent: 90 minutes
 
