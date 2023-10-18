@@ -1,3 +1,7 @@
+module Exercise5 where
+
+-- Time spent: 60 minutes
+
 import Data.List
 
 type Rel a = [(a,a)]
@@ -24,5 +28,3 @@ closeTillEnd r ((x,y):xs) = do
     if (length res) /= 0
     then res ++ closeTillEnd res xs
     else []
-
--- Time spent: 60 minutes
