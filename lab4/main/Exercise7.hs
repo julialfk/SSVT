@@ -35,4 +35,3 @@ module Exercise7 where
 
 -- As you can see, these two sets are not equal and therefore there is a difference between the symmetric
 -- closure of the transitive closure of a relation R and the transitive closure of the symmetric closure of R.
-

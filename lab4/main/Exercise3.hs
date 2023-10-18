@@ -1,5 +1,9 @@
+module Exercise3 where
+
 import Data.List
 import SetOrd
+
+-- Time spent: 20 minutes
 
 type Rel a = [(a,a)]
 
@@ -8,5 +12,3 @@ type Rel a = [(a,a)]
 symClos :: Ord a => Rel a -> Rel a
 symClos [] = []
 symClos ((x,y):xs) = sort $ nub $ (x,y):(y,x):symClos xs
-
--- Time spent 20 minutes

@@ -1,8 +1,11 @@
 module Exercise6 where
+
 import Data.List
 import Test.QuickCheck
 import SetOrd
 import qualified Control.Arrow as closures
+
+-- Time spent: 90 minutes
 
 -- Properties for symClos:
 -- If x,y in set, y,x should be there too
@@ -10,11 +13,9 @@ import qualified Control.Arrow as closures
 -- Is it ordered
 
 -- Properties for trClos:
---
 -- Does it have duplicates
 -- Is it ordered
 -- Check if xRy, and yRz then xRz also exists
-
 
 infixr 5 @@
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
@@ -102,6 +103,3 @@ main = do
 
 -- The properties that are tested all comply with the rules of symmetric closures and transitive closures.
 -- We checked that the relations are ordered and unique, and for the symmetric ones, we also checked for symmetry.
-
-
--- Indication of time spent: 1.5 hours

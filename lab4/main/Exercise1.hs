@@ -1,9 +1,12 @@
 module Exercise1 where
+  
 import Data.List
 import Test.QuickCheck
 import System.Random
 import SetOrd
 import Control.Monad
+
+-- Time spent: 150 min
 
 -- Creates a sample list with use of replication functions and randomRIO
 coolSample :: IO [Set Int]
@@ -54,7 +57,3 @@ main = do
     sample <- coolSample
     print sample
     coolCheck coolSample
-
-
--- Time spent: 150 min
-
