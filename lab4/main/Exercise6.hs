@@ -13,8 +13,7 @@ import qualified Control.Arrow as closures
 --
 -- Does it have duplicates
 -- Is it ordered
--- If xRy and yRz then xRz
-
+-- Check if xRy, and yRz then xRz also exists
 
 infixr 5 @@
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
