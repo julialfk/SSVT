@@ -5,6 +5,8 @@ import Test.QuickCheck
 import SetOrd
 import Exercise1
 
+-- Time Spent: 260 min
+
 -- Additional generator that creates smaller sets with a smaller value range,
 -- so that QuickCheck does not discard too many sets for prop_Identity.
 genSmallSet :: Gen (Set Int)
