@@ -2,19 +2,6 @@ module Exercise6 where
 import Data.List
 import Test.QuickCheck
 import SetOrd
-import qualified Control.Arrow as closures
-
--- Properties for symClos:
--- If x,y in set, y,x should be there too
--- Does it have duplicates
--- Is it ordered
-
--- Properties for trClos:
---
--- Does it have duplicates
--- Is it ordered
--- If xRy and yRz then xRz
-
 
 infixr 5 @@
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
@@ -39,16 +26,27 @@ closeTillEnd r ((x,y):xs) = do
     then res ++ closeTillEnd res xs
     else []
 
+
+-- Properties for symClos:
+-- If x,y in set, y,x should be there too
+-- Does it have duplicates
+-- Is it ordered
+
+-- Properties for trClos:
+-- 
+-- Does it have duplicates
+-- Is it ordered
+-- If xRy and yRz then xRz
+--
+
 type Rel a = [(a,a)]
 
--- Generates relation
 genRelation :: Gen [(Int, Int)]
 genRelation = do
   n <- choose (0, 10)
   l <- vectorOf n genPair
   return l
 
--- Generates relations that symmertic closures
 genSymClosureRelation :: Gen [(Int, Int)]
 genSymClosureRelation = do
   n <- choose (0, 5)
@@ -56,14 +54,12 @@ genSymClosureRelation = do
   let l2 = [(y, x) | (x, y) <- l1]
   return $ sort $ nub $ l1 ++ l2
 
--- Generates relations that are transitive closures
 genTrClosureRelation :: Gen [(Int, Int)]
 genTrClosureRelation = do
   n <- choose (1,10)
   l1 <- vectorOf n genPair
   return (trClos l1)
 
--- Generates a pair, that can be used for generating relations
 genPair :: Gen (Int, Int)
 genPair = do
   x <- choose (1, 9)
@@ -90,7 +86,13 @@ propIsOrdered ls =
         then True
         else False
 
--- Main function to run the properties
+loopTillEnd :: Eq a => a -> Rel a -> Bool
+loopTillEnd y [] = False
+loopTillEnd y ((r, u):xs) = 
+  if (y == r || y == u) then True
+  else loopTillEnd y xs
+
+
 main :: IO ()
 main = do
     quickCheck (forAll genSymClosureRelation propIsOrdered)
@@ -99,9 +101,6 @@ main = do
 
     quickCheck (forAll genTrClosureRelation propIsOrdered)
     quickCheck (forAll genTrClosureRelation propIsUnique)
-
--- The properties that are tested all comply with the rules of symmetric closures and transitive closures.
--- We checked that the relations are ordered and unique, and for the symmetric ones, we also checked for symmetry.
 
 
 -- Indication of time spent: 1.5 hours
