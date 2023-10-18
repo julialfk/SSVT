@@ -36,7 +36,7 @@ setDifference :: Ord a => Set a -> Set a -> Set a
 setDifference (Set xs) (Set ys) = Set (filter (`notElem` ys) xs)
 
 -- Property that checks whether all elements in zs are in both xs and ys (i.e. a subset of both xs and ys).
--- This should be true for the union.
+-- This should be true for the intersection.
 prop_InBothSets :: Ord a => (Set a, Set a, Set a) -> Bool
 prop_InBothSets (Set xs, Set ys, Set zs) = all (\z -> z `elem` xs && z `elem` ys) zs
 
@@ -69,11 +69,17 @@ prop_SmallerEqualSources (Set xs, Set ys, Set zs) = lenzs <= length xs && lenzs 
 
 -- Property that checks whether the size of zs is smaller than/equal to xs.
 -- This should be true for the difference, since the difference is a subset of xs.
+-- This property can be deduced from prop_InFstSet, so if the implementation of that property
+-- is correct, this property would not be necessary.
+-- This property can be used to check whether the first test is correct, however.
 prop_SmallerEqualSource :: Ord a => (Set a, Set a, Set a) -> Bool
 prop_SmallerEqualSource (Set xs, _, Set zs) = length zs <= length xs
 
 -- Property that checks whether the size of zs is smaller than/equal to xs and ys combined.
 -- This should be true for the union, since the merger of two sets cannot have more elements than the two sets combined.
+-- This property can be deduced from prop_InBothSets, so if the implementation of that property
+-- is correct, this property would not be necessary.
+-- This property can be used to check whether the first test is correct, however.
 prop_SmallerEqualTotal :: Ord a => (Set a, Set a, Set a) -> Bool
 prop_SmallerEqualTotal (Set xs, Set ys, Set zs) = length zs <= length xs + length ys
 
@@ -139,6 +145,7 @@ checkProps = do
     checkUnion xs ys unions
     checkDifference xs ys differences
     
+    -- Checks with QuickCheck.
     print "quickChecking Intersection"
     quickCheck (forAll (genNewSet genSet setIntersection) prop_InBothSets)
     quickCheck (forAll (genNewSet genSet setIntersection) prop_SmallerEqualSources)
@@ -158,3 +165,5 @@ checkProps = do
     quickCheck (forAll (genNewSet genSet setDifference) prop_SmallerEqualSource)
     quickCheck (forAll (genNewSet genSet setDifference) prop_NoDupes)
     quickCheck (forAll (genNewSet genSet setDifference) prop_Exclusive)
+
+-- The implementations pass all tests, so it is very probable that the implementations are correct.
