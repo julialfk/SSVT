@@ -52,7 +52,7 @@ main :: IO ()
 main = do
     quickCheck (forAll genSet prop_uniqueElements)
     sample <- coolSample
-    -- print sample
+    print sample
     coolCheck coolSample
 
 
